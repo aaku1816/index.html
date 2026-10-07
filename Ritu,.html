@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Do you love me, Ritu?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@600;800&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg1:#ffe3ec; --bg2:#ffc2d4; --ink:#5a1230; --card:rgba(255,255,255,.62);
+  --rose:#e11d62; --rose2:#ff5c8a; --heart:#ff4d86; --no-bg:#fff; --no-ink:#7a2a4a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg1:#2a0b1f; --bg2:#4a1236; --ink:#ffe3ec; --card:rgba(255,255,255,.08);
+    --rose:#ff4d86; --rose2:#ff8fb1; --heart:#ff6b9a; --no-bg:#3a1a2e; --no-ink:#ffd0e0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg1:#2a0b1f; --bg2:#4a1236; --ink:#ffe3ec; --card:rgba(255,255,255,.08);
+  --rose:#ff4d86; --rose2:#ff8fb1; --heart:#ff6b9a; --no-bg:#3a1a2e; --no-ink:#ffd0e0;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{
+  background:radial-gradient(120% 90% at 50% 0%,var(--bg2),var(--bg1));
+  color:var(--ink);font-family:"Nunito",system-ui,sans-serif;
+  display:grid;place-items:center;overflow:hidden;
+}
+.sky{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.sky span{position:absolute;bottom:-10vh;color:var(--heart);opacity:.0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.5}90%{opacity:.35}100%{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+.card{
+  position:relative;width:min(92vw,520px);padding:44px 28px 40px;text-align:center;
+  background:var(--card);border-radius:36px;
+  border:1px solid color-mix(in srgb,var(--rose) 25%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 30px 80px -30px color-mix(in srgb,var(--rose) 60%,transparent);
+}
+.beat{font-size:64px;line-height:1;color:var(--rose);display:inline-block;animation:beat 1.4s ease-in-out infinite;filter:drop-shadow(0 8px 14px color-mix(in srgb,var(--rose) 45%,transparent))}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.18)}28%{transform:scale(1)}42%{transform:scale(1.12)}70%{transform:scale(1)}}
+h1{font-family:"Dancing Script","Brush Script MT",cursive;font-size:clamp(44px,12vw,68px);line-height:1.05;margin:14px 0 6px;font-weight:700}
+.sub{margin:0 0 30px;font-size:17px;opacity:.8;min-height:1.6em}
+.row{display:flex;gap:18px;justify-content:center;align-items:center;min-height:90px;flex-wrap:wrap}
+button{font:inherit;font-weight:800;font-size:20px;border:0;border-radius:999px;cursor:pointer;padding:14px 38px}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+#yes{background:linear-gradient(135deg,var(--rose2),var(--rose));color:#fff;box-shadow:0 12px 26px -8px var(--rose);transform:scale(var(--s,1));transition:transform .3s cubic-bezier(.3,1.6,.5,1);z-index:2}
+#yes:hover{filter:brightness(1.07)}
+#no{background:var(--no-bg);color:var(--no-ink);box-shadow:0 6px 16px -8px rgba(0,0,0,.4);transition:left .28s cubic-bezier(.3,1.4,.5,1),top .28s cubic-bezier(.3,1.4,.5,1);z-index:3;touch-action:none}
+#no.run{position:fixed}
+#answer{display:none}
+.done #ask{display:none}
+.done #answer{display:block}
+#answer p{font-size:19px;line-height:1.6;margin:14px auto 0;max-width:34ch}
+.burst{position:fixed;left:50%;top:50%;pointer-events:none;color:var(--heart);z-index:9;will-change:transform}
+@media (prefers-reduced-motion:reduce){.beat,.sky span{animation:none}.sky{display:none}#no{transition:none}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+
+<main class="card" id="card">
+  <section id="ask">
+    <div class="beat" aria-hidden="true">♥</div>
+    <h1>Ritu, do you love me?</h1>
+    <p class="sub" id="sub">Take your time, Ritu. Think it over. 😌</p>
+    <div class="row">
+      <button id="yes" type="button">Yes 💖</button>
+      <button id="no" type="button">No</button>
+    </div>
+  </section>
+
+  <section id="answer" aria-live="polite">
+    <div class="beat" aria-hidden="true">♥</div>
+    <h1>I knew it, Ritu!</h1>
+    <p>I love you too, Ritu, more than I can fit on one page. Thank you for being mine. 💕</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var yes=document.getElementById('yes'), no=document.getElementById('no');
+  var sub=document.getElementById('sub'), card=document.getElementById('card');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var lines=["Hmm, that button looks shy. 🙈","Nice try. 😏","The No button doesn't like you much.","Are you sure? Really sure? 🥺","It keeps running away…","Okay, just press Yes already 💖","You can't catch it. Trust me."];
+  var dodges=0, mx=-999, my=-999;
+
+  // floating hearts
+  var sky=document.getElementById('sky');
+  for(var i=0;i<22;i++){
+    var h=document.createElement('span');
+    h.textContent='♥';
+    h.style.left=(Math.random()*100)+'vw';
+    h.style.fontSize=(14+Math.random()*30)+'px';
+    h.style.animationDuration=(9+Math.random()*10)+'s';
+    h.style.animationDelay=(-Math.random()*18)+'s';
+    sky.appendChild(h);
+  }
+
+  function overlaps(x,y,w,h,r,pad){
+    return x<r.right+pad && x+w>r.left-pad && y<r.bottom+pad && y+h>r.top-pad;
+  }
+
+  function dodge(){
+    var b=no.getBoundingClientRect();
+    var w=b.width,h=b.height,m=12;
+    var yr=yes.getBoundingClientRect();
+    var x=b.left,y=b.top,tries=0,ok=false;
+    while(tries<60&&!ok){
+      x=m+Math.random()*Math.max(1,innerWidth-w-m*2);
+      y=m+Math.random()*Math.max(1,innerHeight-h-m*2);
+      var cx=x+w/2,cy=y+h/2;
+      var far=Math.hypot(cx-mx,cy-my)>180;
+      ok=far && !overlaps(x,y,w,h,yr,16);
+      tries++;
+    }
+    if(!no.classList.contains('run')){
+      no.style.left=b.left+'px';no.style.top=b.top+'px';
+      no.classList.add('run');
+      void no.offsetWidth;
+    }
+    no.style.left=x+'px';no.style.top=y+'px';
+    dodges++;
+    sub.textContent=lines[Math.min(dodges-1,lines.length-1)];
+    yes.style.setProperty('--s',Math.min(1+dodges*0.1,1.8));
+  }
+
+  document.addEventListener('pointermove',function(e){
+    mx=e.clientX;my=e.clientY;
+    var b=no.getBoundingClientRect();
+    var cx=b.left+b.width/2,cy=b.top+b.height/2;
+    if(Math.hypot(mx-cx,my-cy)<Math.max(b.width,b.height)/2+55) dodge();
+  });
+  no.addEventListener('pointerdown',function(e){e.preventDefault();mx=e.clientX;my=e.clientY;dodge();});
+  no.addEventListener('focus',function(){dodge();no.blur();});
+  no.addEventListener('click',function(e){e.preventDefault();});
+
+  // celebration
+  yes.addEventListener('click',function(){
+    document.body.classList.add('done');
+    no.style.display='none';
+    if(reduce)return;
+    var glyphs=['♥','💖','💕','💗','❤️'];
+    for(var i=0;i<46;i++){
+      var s=document.createElement('span');
+      s.className='burst';
+      s.textContent=glyphs[i%glyphs.length];
+      s.style.fontSize=(18+Math.random()*30)+'px';
+      document.body.appendChild(s);
+      var a=Math.random()*Math.PI*2, d=140+Math.random()*Math.max(innerWidth,innerHeight)*0.55;
+      s.animate([
+        {transform:'translate(-50%,-50%) scale(.3)',opacity:1},
+        {transform:'translate(calc(-50% + '+Math.cos(a)*d+'px), calc(-50% + '+(Math.sin(a)*d-80)+'px)) scale(1.2) rotate('+(Math.random()*120-60)+'deg)',opacity:0}
+      ],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.15,.7,.3,1)',fill:'forwards'})
+       .onfinish=(function(el){return function(){el.remove();};})(s);
+    }
+  });
+})();
+</script>
+</body>
+</html>
